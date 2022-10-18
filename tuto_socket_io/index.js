@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 app.get('/', (req, res) => {
+    const isAuthenticated = !!req.user;
     res.sendFile(__dirname + '/index.html');
 });
 
