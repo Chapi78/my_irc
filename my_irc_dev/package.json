@@ -2,6 +2,9 @@
     "name": "socket-irc-try",
     "version": "0.0.1",
     "description": "my first IRC on socket.io",
+    "scripts": {
+        "start": "nodemon server/index.js"
+    },
     "dependencies": {
         "express": "^4.18.2"
     }
