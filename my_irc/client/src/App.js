@@ -7,37 +7,36 @@ const socket = io.connect("http://localhost:3002");
 
 function App() {
   const [username, setUsername] = useState("");
-  const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
-
-  const joinRoom = (e) => {
+  
+  const register = (e) => {
     e.preventDefault();
-    if (username !== "" && room !== "") {
-      socket.emit("join_room", room)
-      setShowChat(true);
-    }
+    setShowChat(true);
+    localStorage.setItem('username', username);
+    socket.emit("newUser", { username: username, socket: socket.id })
   }
 
   return (
     <div className="App">
-      {!showChat ? (
-      <form onSubmit={(e) => joinRoom(e)}>
-        <h3>Join a chat</h3>
-        <input type="text" placeholder="Name..." 
-          onChange={(event) => {
-            setUsername(event.target.value);
-          }}
-          />
-        <input type="text" placeholder="Room id"
-        onChange={(event) => {
-          setRoom(event.target.value);
-        }}
-        />
-        <button type="submit">Join</button>
-      </form>
-      ) : (
-      <Chat socket={socket} username={username} room={room} />
-      )}
+    {!showChat ? (
+      <div id='login_box'>
+        <div>
+          <h3>Welcome to MyIrc, enter your username to begin chating</h3>
+          <form onSubmit={e => register(e)}>
+            <input
+                type="text"
+                placeholder="Enter username"
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                }}
+              />
+            <button type="submit">Save</button>
+          </form>
+        </div>
+      </div>
+    ) : (
+      <Chat socket={socket} username={username}/>
+    )}
     </div>
   );
 }

@@ -16,12 +16,32 @@ const io = new Server(server, {
     },
 });
 
+const users = [];
+
+const yann = "yannnnn";
+
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    socket.on('newUser', (data) => {
+
+    })
+
     socket.on("join_room", (data) => {
-        socket.join(data);
-        console.log(`User : ${socket.id} joined room: ${data}`);
+        // console.log(Object.keys(io.engine.clients)); // get all iencli
+        console.log(socket.id);
+        users.push({
+            username: data.username,
+            id: socket.id,
+            room: data.room,
+        });
+        socket.join(data.room);
+        console.log(io.sockets.adapter.rooms);
+        console.log(`User : ${data.username} joined room: ${data.room}`);
+    });
+
+    socket.on("notif", (data) => {
+        socket.to(data.room).emit("notif", data);
     });
 
     socket.on("send_message", (data) => {
@@ -31,6 +51,16 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("User disconnected: ", socket.id);
+        console.log("begin");
+        console.log(users);
+        const result = users.find(({ id }) => id === socket.id)
+        for(var i = 0; i < users.length; i++) {
+            if(users[i] === result) {
+                users.splice(i, 1);
+            }
+        }
+        console.log("end");
+        console.log(users);
         io.emit('message', 'User');
     });
 })
